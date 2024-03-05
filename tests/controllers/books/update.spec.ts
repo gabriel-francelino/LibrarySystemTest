@@ -71,6 +71,6 @@ describe('UpdateBooksController', ()=> {
 
     await expect(promise).resolves.not.toThrow()
     expect(booksRepositoryMock.getById).toHaveBeenCalledWith(bookMock.id)
-    expect(responseMock.statusCode).toEqual(529)
+    expect(responseMock.statusCode).toEqual(500)
   })
 })

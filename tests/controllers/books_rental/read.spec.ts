@@ -66,7 +66,7 @@ describe('ReadBooksRentalController', ()=> {
 
       await expect(promise).resolves.not.toThrow()
       expect(booksRentalRepositoryMock.getById).toHaveBeenCalledWith(booksRentalMock.id)
-       expect(booksRentalRepositoryMock.getById).toHaveBeenCalledTimes(2)
+       expect(booksRentalRepositoryMock.getById).toHaveBeenCalledTimes(1)
       expect(responseMock.statusCode).toEqual(204)
     })
 
