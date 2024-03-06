@@ -21,6 +21,8 @@ describe('ReadBooksRentalController', ()=> {
       ...newBooksRentalMock
     }
 
+    const booksRentalListMock: BooksRental[] = [ booksRentalMock ]
+
     const requestMock = { 
       body: newBooksRentalMock,
       params: { id: booksRentalMock.id } as any,
@@ -38,7 +40,7 @@ describe('ReadBooksRentalController', ()=> {
     } as Response
 
     return {
-      controller, newBooksRentalMock, booksRentalMock, requestMock, responseMock
+      controller, newBooksRentalMock, booksRentalMock, booksRentalListMock, requestMock, responseMock
     }
   }
 
@@ -84,8 +86,26 @@ describe('ReadBooksRentalController', ()=> {
   })
 
   describe('list', () => {
-    it.todo('should return the list of books rental')
+    it('should return the list of books rental', async () => {
+      const {controller, newBooksRentalMock, booksRentalMock, booksRentalListMock, requestMock, responseMock}= makeSut()
+      jest.spyOn(booksRentalRepositoryMock, 'list').mockResolvedValueOnce(booksRentalListMock)
 
-    it.todo('should return 500 if some error occur')
+      const promise = controller.list(requestMock, responseMock)
+
+      await expect(promise).resolves.not.toThrow()
+      expect(booksRentalRepositoryMock.list).toHaveBeenCalledTimes(1)
+      expect(responseMock.statusCode).toEqual(200)
+    })
+
+    it('should return 500 if some error occur', async () => {
+      const {controller, newBooksRentalMock, booksRentalMock, booksRentalListMock, requestMock, responseMock}= makeSut()
+      jest.spyOn(booksRentalRepositoryMock, 'list').mockRejectedValueOnce(new Error('some error'))
+
+      const promise = controller.list(requestMock, responseMock)
+
+      await expect(promise).resolves.not.toThrow()
+      expect(booksRentalRepositoryMock.list).toHaveBeenCalledTimes(1)
+      expect(responseMock.statusCode).toEqual(500)
+    })
   })
 })
