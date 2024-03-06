@@ -82,7 +82,7 @@ describe('ReadUsersController', ()=> {
 
   })
 
-  describe.only('list', () => {
+  describe('list', () => {
     it('should return the list of users', async () => {
       const {controller, newUserMock, userMock, userListMock, requestMock, responseMock} = makeSut()
       jest.spyOn(usersRepositoryMock, 'list').mockResolvedValueOnce(userListMock)
