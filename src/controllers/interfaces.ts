@@ -4,6 +4,7 @@ export interface IUsersRepository {
   create(newUser: NewUser): Promise<User>
   getById(id: string): Promise<User | undefined>
   getByEmail(email: string): Promise<User | undefined>
+  list(): Promise<User[]>
 }
 
 export interface IBooksRepository {

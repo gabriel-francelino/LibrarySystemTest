@@ -25,4 +25,14 @@ export class UsersRepository implements IUsersRepository {
 
     return user.dataValues
   }
+
+  public async list(): Promise<User[]> {
+    const users = await UsersModel.findAll()
+
+    return users.map(user => ({
+      id: user.dataValues.id,
+      name: user.dataValues.name,
+      email: user.dataValues.email
+    }))
+  }
 }
