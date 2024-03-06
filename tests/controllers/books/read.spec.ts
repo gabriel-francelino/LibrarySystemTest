@@ -3,7 +3,7 @@ import { logger } from '../../mocks/logger'
 import { booksRepositoryMock } from '../../mocks/books_repository'
 import { Book, NewBook } from '../../../src/controllers/models'
 import { fakerEN } from '@faker-js/faker'
-import { Request, Response } from 'express'
+import { Request, Response, response } from 'express'
 
 describe('ReadBooksController', ()=> {
   function makeSut() {
@@ -22,6 +22,10 @@ describe('ReadBooksController', ()=> {
       ...newBookMock
     }
 
+    const bookListMock: Book[] = [
+      bookMock,
+    ]
+
     const requestMock = { 
       body: newBookMock,
       params: { id: bookMock.id } as any
@@ -39,7 +43,7 @@ describe('ReadBooksController', ()=> {
     } as Response
 
     return {
-      controller, newBookMock, bookMock, requestMock, responseMock
+      controller, newBookMock, bookMock, bookListMock, requestMock, responseMock
     }
   }
 
@@ -84,8 +88,28 @@ describe('ReadBooksController', ()=> {
   })
 
   describe('list', () => {
-    it.todo('should return the list of books')
+    it('should return the list of books', async () => {
+      const {controller, newBookMock, bookMock, bookListMock, requestMock, responseMock} = makeSut()
+      jest.spyOn(booksRepositoryMock, 'list').mockResolvedValue(bookListMock)
 
-    it.todo('should return 500 if some error occur')
+      const promise = controller.list(requestMock, responseMock)
+
+      await expect(promise).resolves.not.toThrow()
+      // expect(booksRepositoryMock.list()).toHaveLength(1)
+      // expect(booksRepositoryMock.list).toContain(bookMock)
+      expect(booksRepositoryMock.list).toHaveBeenCalledTimes(1)
+      expect(responseMock.statusCode).toEqual(200)
+    })
+
+    it('should return 500 if some error occur', async () => {
+      const {controller, bookMock, requestMock, responseMock} = makeSut()
+      jest.spyOn(booksRepositoryMock, 'list').mockRejectedValueOnce(new Error('some error'))
+
+      const promise = controller.list(requestMock, responseMock)
+
+      await expect(promise).resolves.not.toThrow()
+      expect(booksRepositoryMock.list).toHaveBeenCalledTimes(1)
+      expect(responseMock.statusCode).toEqual(500)
+    })
   })
 })
