@@ -13,7 +13,7 @@ export class UpdateUsersController {
     const body = req.body
 
     try {
-      const user = this.usersRepository.getById(id)
+      const user = await this.usersRepository.getById(id)
 
       if(!user) {
         res.status(404).json({ message: 'not any user with the id provided was founded' })
