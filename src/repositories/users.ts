@@ -1,3 +1,4 @@
+import { DataTypes } from 'sequelize';
 import { IUsersRepository } from '../controllers/interfaces';
 import { NewUser, User } from '../controllers/models';
 import { UsersModel } from '../db/models/Users'
@@ -34,5 +35,16 @@ export class UsersRepository implements IUsersRepository {
       name: user.dataValues.name,
       email: user.dataValues.email
     }))
+  }
+
+  public async update(id: string, user: NewUser): Promise<User> {
+    await UsersModel.update({...user}, {where: { id }})
+
+    const userUpdated = await UsersModel.findOne({ where: { id } })
+
+    if(!userUpdated)
+      return undefined
+    
+    return userUpdated.dataValues
   }
 }
