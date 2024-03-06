@@ -59,9 +59,29 @@ describe('UpdateBooksController', ()=> {
     expect(responseMock.statusCode).toEqual(200)
   })
 
-  it.todo('should return 404 statusCode and not update the book if there is no book with the id provided')
+  it('should return 404 statusCode and not update the book if there is no book with the id provided', async () => {
+    const {controller, newBookMock, bookMock, requestMock, responseMock} = makeSut()
+    jest.spyOn(booksRepositoryMock, 'getById').mockResolvedValueOnce(undefined)
+    jest.spyOn(booksRepositoryMock, 'update')
+    
+    const promise = controller.update(requestMock, responseMock)
 
-  it.todo('should return 409 statusCode and not update the book if there is a book with the same title')
+    await expect(promise).resolves.not.toThrow()
+    expect(booksRepositoryMock.update).not.toHaveBeenCalled()
+    expect(responseMock.statusCode).toEqual(404)
+  })
+
+  it('should return 409 statusCode and not update the book if there is a book with the same title', async () => {
+    const { controller, newBookMock, bookMock, requestMock, responseMock } = makeSut()
+    jest.spyOn(booksRepositoryMock, 'getByTitle').mockResolvedValueOnce(bookMock)
+    jest.spyOn(booksRepositoryMock, 'update')
+
+    const promise = controller.update(requestMock, responseMock)
+
+    await expect(promise).resolves.not.toThrow()
+    expect(booksRepositoryMock.update).not.toHaveBeenCalled()
+    expect(responseMock.statusCode).toEqual(409)
+  })
 
   it('should return 500 if some error occur', async () => {
     const { controller, newBookMock, bookMock, requestMock, responseMock } = makeSut()
