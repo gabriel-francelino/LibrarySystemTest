@@ -43,7 +43,7 @@ describe('CreateUsersController', () => {
   it('should create user if there is no other user with the same email', async () => {
     const { controller, newUserMock, userMock, requestMock, responseMock } = makeSut()
     jest.spyOn(usersRepositoryMock, 'getByEmail').mockResolvedValueOnce(undefined)
-    jest.spyOn(usersRepositoryMock, 'create').mockRejectedValueOnce(userMock)
+    jest.spyOn(usersRepositoryMock, 'create').mockResolvedValueOnce(userMock)
 
     const promise = controller.create(requestMock, responseMock)
 
