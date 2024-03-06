@@ -19,6 +19,8 @@ describe('ReadUsersController', ()=> {
       ...newUserMock
     }
 
+    const userListMock: User[] = [ userMock ]
+
     const requestMock = { 
       body: newUserMock,
       params: { id: userMock.id } as any
@@ -36,7 +38,7 @@ describe('ReadUsersController', ()=> {
     } as Response
 
     return {
-      controller, newUserMock, userMock, requestMock, responseMock
+      controller, newUserMock, userMock, userListMock, requestMock, responseMock
     }
   }
 
@@ -80,9 +82,27 @@ describe('ReadUsersController', ()=> {
 
   })
 
-  describe('list', () => {
-    it.todo('should return the list of users')
+  describe.only('list', () => {
+    it('should return the list of users', async () => {
+      const {controller, newUserMock, userMock, userListMock, requestMock, responseMock} = makeSut()
+      jest.spyOn(usersRepositoryMock, 'list').mockResolvedValueOnce(userListMock)
 
-    it.todo('should return 500 if some error occur')
+      const promise = controller.list(requestMock, responseMock)
+
+      await expect(promise).resolves.not.toThrow()
+      expect(usersRepositoryMock.list).toHaveBeenCalledTimes(1)
+      expect(responseMock.statusCode).toEqual(200)
+    })
+
+    it('should return 500 if some error occur', async () => {
+      const {controller, newUserMock, userMock, userListMock, requestMock, responseMock} = makeSut()
+      jest.spyOn(usersRepositoryMock, 'list').mockRejectedValueOnce(new Error('some error'))
+
+      const promise = controller.list(requestMock, responseMock)
+
+      await expect(promise).resolves.not.toThrow()
+      expect(usersRepositoryMock.list).toHaveBeenCalledTimes(1)
+      expect(responseMock.statusCode).toEqual(500)
+    })
   })
 })
