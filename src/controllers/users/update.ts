@@ -20,7 +20,7 @@ export class UpdateUsersController {
         return
       }
 
-      if(body.email && body.email !== (await user).email) {
+      if(body.email && (body.email !== user.email)) {
         const withTheSameEmail = await this.usersRepository.getByEmail(body.email)
         if (withTheSameEmail) {
           res.status(409).json({ message: 'there is already a user with the same email provided' })
