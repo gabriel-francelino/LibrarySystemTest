@@ -97,6 +97,17 @@ export class BooksRentalRepository implements IBooksRentalRepository {
     }))
   }
 
+  public async update(id: string, bookRental: NewBooksRental): Promise<BooksRental> {
+    await BooksRentalModel.update({...bookRental}, {where: {id}})
+
+    const updatedBookRental = await BooksRentalModel.findOne({where: {id}})
+
+    if(!updatedBookRental)
+      return undefined
+
+    return updatedBookRental.dataValues
+  }
+
   public async delete(id: string): Promise<void> {
     await BooksRentalModel.destroy({ where: { id }})
   }
