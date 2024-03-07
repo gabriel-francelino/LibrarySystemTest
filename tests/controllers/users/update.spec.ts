@@ -70,7 +70,26 @@ describe('UpdateUsersController', ()=> {
     expect(responseMock.statusCode).toEqual(404)
   })
 
-  it.todo('should return 409 statusCode and not update the user if there is an user with the same email')
+  it('should return 409 statusCode and not update the user if there is an user with the same email', async () => {
+    const {controller, newUserMock, userMock, requestMock, responseMock} = makeSut()
+    jest.spyOn(usersRepositoryMock, 'getByEmail').mockResolvedValueOnce(userMock)
+    jest.spyOn(usersRepositoryMock, 'update')
 
-  it.todo('should return 500 if some error occur')
+    const promise = controller.update(requestMock, responseMock)
+
+    await expect(promise).resolves.not.toThrow()
+    expect(usersRepositoryMock.update).not.toHaveBeenCalled()
+    expect(responseMock.statusCode).toEqual(409)
+  
+  })
+
+  it('should return 500 if some error occur', async () => {
+    const {controller, newUserMock, userMock, requestMock, responseMock} = makeSut()
+    jest.spyOn(usersRepositoryMock, 'getById').mockRejectedValueOnce(new Error('some error'))
+
+    const promise = controller.update(requestMock, responseMock)
+
+    await expect(promise).resolves.not.toThrow()
+    expect(responseMock.statusCode).toEqual(500)
+  })
 })
