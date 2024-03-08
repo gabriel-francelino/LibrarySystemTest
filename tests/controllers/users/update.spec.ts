@@ -44,20 +44,6 @@ describe('UpdateUsersController', ()=> {
     jest.clearAllMocks()
   })
 
-  it('should update and return user if the user was funded and if there is no other user with the same email', async () => {
-    const {controller, newUserMock, userMock, requestMock, responseMock} = makeSut()
-    jest.spyOn(usersRepositoryMock, 'getById').mockResolvedValueOnce(userMock)
-    jest.spyOn(usersRepositoryMock, 'getByEmail').mockResolvedValueOnce(undefined)
-    jest.spyOn(usersRepositoryMock, 'update').mockResolvedValueOnce(userMock)
-
-    const promise = controller.update(requestMock, responseMock)
-
-    await expect(promise).resolves.not.toThrow()
-    expect(usersRepositoryMock.getById).toHaveBeenCalledWith(userMock.id)
-    expect(usersRepositoryMock.update).toHaveBeenCalledWith(userMock.id, newUserMock)
-    expect(responseMock.statusCode).toEqual(200)
-  })
-
   it('should return 404 statusCode and not update the user if there is no user with the id provided', async () => {
     const {controller, newUserMock, userMock, requestMock, responseMock} = makeSut()
     jest.spyOn(usersRepositoryMock, 'getById').mockResolvedValueOnce(undefined)
@@ -81,6 +67,20 @@ describe('UpdateUsersController', ()=> {
     expect(usersRepositoryMock.update).not.toHaveBeenCalled()
     expect(responseMock.statusCode).toEqual(409)
   
+  })
+
+  it('should update and return user if the user was funded and if there is no other user with the same email', async () => {
+    const {controller, newUserMock, userMock, requestMock, responseMock} = makeSut()
+    jest.spyOn(usersRepositoryMock, 'getById').mockResolvedValueOnce(userMock)
+    jest.spyOn(usersRepositoryMock, 'getByEmail').mockResolvedValueOnce(undefined)
+    jest.spyOn(usersRepositoryMock, 'update').mockResolvedValueOnce(userMock)
+
+    const promise = controller.update(requestMock, responseMock)
+
+    await expect(promise).resolves.not.toThrow()
+    expect(usersRepositoryMock.getById).toHaveBeenCalledWith(userMock.id)
+    expect(usersRepositoryMock.update).toHaveBeenCalledWith(userMock.id, newUserMock)
+    expect(responseMock.statusCode).toEqual(200)
   })
 
   it('should return 500 if some error occur', async () => {
